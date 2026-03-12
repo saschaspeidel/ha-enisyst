@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "enisyst Wallbox einrichten",
+        "description": "Bitte gib deine eniserv.de Zugangsdaten und die Stations-ID ein.",
+        "data": {
+          "username": "Benutzername (E-Mail)",
+          "password": "Passwort",
+          "station_id": "Stations-ID"
+        },
+        "data_description": {
+          "username": "Die E-Mail-Adresse deines eniserv.de Accounts",
+          "password": "Das Passwort deines eniserv.de Accounts",
+          "station_id": "Die ID deiner Station, z. B. B827EB5AF619"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Ungültige Anmeldedaten. Bitte prüfe Benutzername und Passwort.",
+      "cannot_connect": "Verbindung zu eniserv.de fehlgeschlagen.",
+      "no_chargepoints": "Keine Ladepunkte für diese Stations-ID gefunden.",
+      "unknown": "Unbekannter Fehler. Bitte prüfe die Logs."
+    },
+    "abort": {
+      "already_configured": "Diese Station ist bereits eingerichtet."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {"name": "Status"},
+      "status_text": {"name": "Status Text"},
+      "power": {"name": "Leistung"},
+      "current": {"name": "Ladestrom"},
+      "cm_current": {"name": "LM-Strom"},
+      "max_current": {"name": "Max. Strom"},
+      "min_current": {"name": "Min. Strom"},
+      "charged_energy": {"name": "Geladene Energie"},
+      "charging_time": {"name": "Ladezeit"},
+      "mode": {"name": "Lademodus"},
+      "enabled": {"name": "Aktiviert"},
+      "ocpp_connected": {"name": "OCPP verbunden"},
+      "modbus_connected": {"name": "Modbus verbunden"},
+      "firmware": {"name": "Firmware"},
+      "regulation_reason": {"name": "Regelungsgrund"},
+      "user_id": {"name": "Aktiver Benutzer"},
+      "plug_and_charge": {"name": "Plug & Charge"}
+    }
+  }
+}

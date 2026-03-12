@@ -1,0 +1,6 @@
+{
+  "name": "enisyst Wallbox (unofficial)",
+  "description": "Home Assistant integration for enisyst wallboxes via eniserv.de",
+  "render_readme": true,
+  "homeassistant": "2026.1.0"
+}

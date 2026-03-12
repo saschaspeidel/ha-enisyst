@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up enisyst Wallbox",
+        "description": "Enter your eniserv.de credentials and the Station ID.",
+        "data": {
+          "username": "Username (e-mail)",
+          "password": "Password",
+          "station_id": "Station ID"
+        },
+        "data_description": {
+          "username": "The e-mail address of your eniserv.de account",
+          "password": "The password of your eniserv.de account",
+          "station_id": "The ID of your station, e.g. B827EB5AF619"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid credentials. Please check your username and password.",
+      "cannot_connect": "Failed to connect to eniserv.de.",
+      "no_chargepoints": "No charging points found for this station ID.",
+      "unknown": "Unknown error. Please check the logs."
+    },
+    "abort": {
+      "already_configured": "This station is already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {"name": "Status"},
+      "status_text": {"name": "Status Text"},
+      "power": {"name": "Power"},
+      "current": {"name": "Current"},
+      "cm_current": {"name": "CM Current"},
+      "max_current": {"name": "Max Current"},
+      "min_current": {"name": "Min Current"},
+      "charged_energy": {"name": "Charged Energy"},
+      "charging_time": {"name": "Charging Time"},
+      "mode": {"name": "Charging Mode"},
+      "enabled": {"name": "Enabled"},
+      "ocpp_connected": {"name": "OCPP Connected"},
+      "modbus_connected": {"name": "Modbus Connected"},
+      "firmware": {"name": "Firmware"},
+      "regulation_reason": {"name": "Regulation Reason"},
+      "user_id": {"name": "Active User ID"},
+      "plug_and_charge": {"name": "Plug & Charge"}
+    }
+  }
+}

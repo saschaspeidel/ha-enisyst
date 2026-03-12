@@ -1,0 +1,12 @@
+{
+  "domain": "enisyst",
+  "name": "enisyst Wallbox",
+  "version": "1.0.0",
+  "documentation": "https://github.com/saschaspeidel/ha-enisyst",
+  "issue_tracker": "https://github.com/saschaspeidel/ha-enisyst/issues",
+  "dependencies": [],
+  "codeowners": ["@saschaspeidel"],
+  "requirements": [],
+  "iot_class": "cloud_polling",
+  "config_flow": true
+}
