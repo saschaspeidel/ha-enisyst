@@ -110,7 +110,7 @@ SENSOR_DESCRIPTIONS: tuple[EnisystSensorEntityDescription, ...] = (
         native_unit_of_measurement=UnitOfTime.MINUTES,
         device_class=SensorDeviceClass.DURATION,
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=lambda d: round(d.get("chargingTime") / 60, 1) if d.get("chargingTime") is not None else None,
+        value_fn=lambda d: round(float(d.get("chargingTime")) / 60, 1) if d.get("chargingTime") is not None else None,
     ),
     EnisystSensorEntityDescription(
         key="mode",
