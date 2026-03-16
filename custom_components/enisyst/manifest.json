@@ -1,7 +1,7 @@
 {
   "domain": "enisyst",
   "name": "enisyst Wallbox",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "documentation": "https://github.com/saschaspeidel/ha-enisyst",
   "issue_tracker": "https://github.com/saschaspeidel/ha-enisyst/issues",
   "dependencies": [],
