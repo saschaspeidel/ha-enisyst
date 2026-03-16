@@ -98,7 +98,10 @@ SENSOR_DESCRIPTIONS: tuple[EnisystSensorEntityDescription, ...] = (
         key="charged_energy",
         translation_key="charged_energy",
         name="Charged Energy",
+        # API delivers Wh – HA will display as kWh via suggested_unit
         native_unit_of_measurement=UnitOfEnergy.WATT_HOUR,
+        suggested_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+        suggested_display_precision=2,
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=lambda d: d.get("chargedEnergy"),
@@ -107,10 +110,13 @@ SENSOR_DESCRIPTIONS: tuple[EnisystSensorEntityDescription, ...] = (
         key="charging_time",
         translation_key="charging_time",
         name="Charging Time",
-        native_unit_of_measurement=UnitOfTime.MINUTES,
+        # API delivers seconds – HA will display as hours via suggested_unit
+        native_unit_of_measurement=UnitOfTime.SECONDS,
+        suggested_unit_of_measurement=UnitOfTime.HOURS,
+        suggested_display_precision=2,
         device_class=SensorDeviceClass.DURATION,
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=lambda d: round(float(d.get("chargingTime")) / 60, 1) if d.get("chargingTime") is not None else None,
+        value_fn=lambda d: d.get("chargingTime"),
     ),
     EnisystSensorEntityDescription(
         key="mode",

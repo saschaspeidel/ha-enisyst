@@ -13,9 +13,19 @@ from .const import DOMAIN, SCAN_INTERVAL_SECONDS
 
 _LOGGER = logging.getLogger(__name__)
 
+# Number of consecutive failures before entities go unavailable.
+# At 30s poll interval this means ~2.5 minutes of tolerance.
+FAILURE_TOLERANCE = 5
+
 
 class EnisystCoordinator(DataUpdateCoordinator[dict[str, Any]]):
-    """Polls the eniserv.de API and provides data to all sensors."""
+    """Polls the eniserv.de API and provides data to all sensors.
+
+    Consecutive failures are counted. Only after FAILURE_TOLERANCE
+    consecutive failed polls is UpdateFailed raised, which causes HA
+    to mark entities as unavailable. During the tolerance window the
+    last known good data is silently kept.
+    """
 
     def __init__(self, hass: HomeAssistant, client: EnisystApiClient) -> None:
         super().__init__(
@@ -25,21 +35,45 @@ class EnisystCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             update_interval=timedelta(seconds=SCAN_INTERVAL_SECONDS),
         )
         self.client = client
+        # Counts consecutive failed API calls
+        self._failure_count: int = 0
 
     async def _async_update_data(self) -> dict[str, Any]:
-        """Fetch latest charger list from the API."""
+        """Fetch latest charger data, tolerating short API outages."""
         try:
-            chargepoints = await self.client.async_get_chargepoints()
-        except EnisystAuthError as exc:
-            _LOGGER.warning("Authentication issue, will retry: %s", exc)
-            # Force re-login and try once more
-            self.client._last_login = 0.0
-            try:
-                chargepoints = await self.client.async_get_chargepoints()
-            except (EnisystAuthError, EnisystApiError) as retry_exc:
-                raise UpdateFailed(f"enisyst auth error: {retry_exc}") from retry_exc
-        except EnisystApiError as exc:
-            raise UpdateFailed(f"enisyst API error: {exc}") from exc
+            chargepoints = await self._fetch_with_auth_retry()
+        except (EnisystAuthError, EnisystApiError) as exc:
+            self._failure_count += 1
+            _LOGGER.warning(
+                "enisyst API call failed (attempt %d/%d): %s",
+                self._failure_count,
+                FAILURE_TOLERANCE,
+                exc,
+            )
+            if self._failure_count >= FAILURE_TOLERANCE:
+                # Exceeded tolerance – let HA mark entities unavailable
+                raise UpdateFailed(
+                    f"enisyst API unreachable after {self._failure_count} attempts: {exc}"
+                ) from exc
 
-        # Key by serialnumber for easy lookup
+            # Return last known good data so entities stay available
+            if self.data:
+                _LOGGER.debug("Returning cached data during outage window")
+                return self.data
+
+            # No cached data yet (e.g. first poll) – must raise
+            raise UpdateFailed(f"enisyst API error on first poll: {exc}") from exc
+
+        # Successful call – reset failure counter
+        self._failure_count = 0
         return {cp["serialnumber"]: cp for cp in chargepoints if "serialnumber" in cp}
+
+    async def _fetch_with_auth_retry(self) -> list[dict[str, Any]]:
+        """Attempt API fetch; on auth error re-login once and retry."""
+        try:
+            return await self.client.async_get_chargepoints()
+        except EnisystAuthError:
+            _LOGGER.warning("Session expired – re-logging in")
+            self.client._last_login = 0.0
+            await self.client.async_login()
+            return await self.client.async_get_chargepoints()
